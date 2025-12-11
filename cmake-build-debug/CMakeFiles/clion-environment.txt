@@ -1,0 +1,5 @@
+ToolSet: 11.0 w64 (local)@D:\Bandicam v7.1.2.2451 x64\clion\CLion 2024.2.1\bin\mingw
+Ninja: 1.12.1@D:\Bandicam v7.1.2.2451 x64\clion\CLion 2024.2.1\bin\ninja\win\x64\ninja.exe
+Options: 
+
+Options:

@@ -1,0 +1,25 @@
+# ninja log v6
+43	433	7871716695472950	build.ninja	23d57668ee1073ca
+34	128	7871716648021643	CMakeFiles/A2_Algorithms.dir/main.cpp.obj	7bd3b82929131660
+35	1389	7871716418195848	CMakeFiles/A2_Algorithms.dir/ArcadiaEngine.cpp.obj	c202158af35acedf
+1692	2041	7871716180673201	A2_Algorithms.exe	8c585206a14f8719
+10	1250	7871716846236090	CMakeFiles/A2_Algorithms.dir/ArcadiaEngine.cpp.obj	c202158af35acedf
+1251	1434	7871716858646239	A2_Algorithms.exe	8c585206a14f8719
+52	1352	7871717327442276	CMakeFiles/A2_Algorithms.dir/ArcadiaEngine.cpp.obj	c202158af35acedf
+1352	1519	7871717340446142	A2_Algorithms.exe	8c585206a14f8719
+40	1281	7871717648708549	CMakeFiles/A2_Algorithms.dir/ArcadiaEngine.cpp.obj	c202158af35acedf
+1282	1467	7871717661126865	A2_Algorithms.exe	8c585206a14f8719
+54	1460	7871718878579446	CMakeFiles/A2_Algorithms.dir/ArcadiaEngine.cpp.obj	c202158af35acedf
+1461	1647	7871718892651178	A2_Algorithms.exe	8c585206a14f8719
+45	1509	7871721477722349	CMakeFiles/A2_Algorithms.dir/ArcadiaEngine.cpp.obj	c202158af35acedf
+1510	1702	7871721492367063	A2_Algorithms.exe	8c585206a14f8719
+52	1399	7871722770668416	CMakeFiles/A2_Algorithms.dir/ArcadiaEngine.cpp.obj	c202158af35acedf
+1400	1599	7871722784143934	A2_Algorithms.exe	8c585206a14f8719
+52	1297	7871723358794969	CMakeFiles/A2_Algorithms.dir/ArcadiaEngine.cpp.obj	c202158af35acedf
+1298	1449	7871723371258570	A2_Algorithms.exe	8c585206a14f8719
+51	1439	7871724765679032	CMakeFiles/A2_Algorithms.dir/ArcadiaEngine.cpp.obj	c202158af35acedf
+1439	1599	7871724779555762	A2_Algorithms.exe	8c585206a14f8719
+51	1354	7871725433563195	CMakeFiles/A2_Algorithms.dir/ArcadiaEngine.cpp.obj	c202158af35acedf
+1355	1529	7871725446593763	A2_Algorithms.exe	8c585206a14f8719
+43	1438	7871725912469525	CMakeFiles/A2_Algorithms.dir/ArcadiaEngine.cpp.obj	c202158af35acedf
+1438	1596	7871725926425298	A2_Algorithms.exe	8c585206a14f8719

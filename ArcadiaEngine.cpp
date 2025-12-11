@@ -8,12 +8,14 @@
 #include <climits>
 #include <cmath>
 #include <cstdlib>
+#include <iomanip>
 #include <vector>
 #include <string>
 #include <iostream>
 #include <map>
 #include <set>
 
+#define Table_Size 101
 using namespace std;
 
 // =========================================================
@@ -24,22 +26,142 @@ using namespace std;
 
 class ConcretePlayerTable : public PlayerTable {
 private:
-    // TODO: Define your data structures here
-    // Hint: You'll need a hash table with double hashing collision resolution
+    int ids[Table_Size];
+    string names[Table_Size];
+    bool used[Table_Size];
+
+    int hash1(int key) {
+        long long squared = 1LL * key * key;
+        string s = to_string(squared);
+        int len = s.length();
+        int mid = len / 2;
+        int start = mid - 1;
+        if (start < 0) start = 0;
+        if (start + 3 > len) {
+            start = len - 3;
+            if (start < 0) start = 0;
+        }
+        string midDigits = s.substr(start, 3);
+        int value = stoi(midDigits);
+        return value % Table_Size;
+    }
+
+    int hash2(int key) {
+        double Golden_Ratio = 0.6180339887;
+        double frac = (key * Golden_Ratio) - static_cast<long long>(key * Golden_Ratio);
+        int step = static_cast<int>(frac * (Table_Size - 1));
+        return step + 1;
+    }
+
+    void Print_Table() const {
+        const int columns = 5;
+        const int rows = (Table_Size + columns - 1) / columns;
+        const int cell_size = 17;
+
+        string line_separator = "+";
+        for (int c = 0; c < columns; c++) {
+            line_separator += string(cell_size + 2, '-') + "+";
+        }
+        int total_width = line_separator.length();
+        string title = "Hash Table";
+        int padding_left = (total_width - 2 - title.length()) / 2;
+        int padding_right = total_width - 2 - title.length() - padding_left;
+
+        cout << "\n" << line_separator << "\n";
+        cout << "|" << string(padding_left, ' ') << title << string(padding_right, ' ') << "|\n";
+        cout << line_separator << "\n";
+
+        int index = 0;
+        for (int r = 0; r < rows; r++) {
+            cout << "|";
+            for (int c = 0; c < columns; c++) {
+                string content;
+
+                if (index < Table_Size) {
+                    if (used[index]) {
+                        content = names[index] + " (" + to_string(ids[index]) + ")";
+                    }
+                    else {
+                        content = "empty";
+                    }
+
+                    if (content.length() > cell_size) {
+                        content = content.substr(0, cell_size);
+                    }
+                }
+                else {
+                    content = "";
+                }
+
+                cout << " " << setw(cell_size) << left << content << " |";
+                index++;
+            }
+            cout << "\n" << line_separator << "\n";
+        }
+    }
 
 public:
     ConcretePlayerTable() {
-        // TODO: Initialize your hash table
+        for (int i = 0; i < Table_Size; i++) {
+            used[i] = false;
+        }
     }
 
     void insert(int playerID, string name) override {
-        // TODO: Implement double hashing insert
-        // Remember to handle collisions using h1(key) + i * h2(key)
+        int index1 = hash1(playerID);
+        int index2 = hash2(playerID);
+
+        cout << "\n=== INSERT(" << playerID << ", " << name << ") ===\n";
+        cout << "hash1 = " << index1 << ", hash2 = " << index2 << "\n";
+
+        for (int i = 0; i < Table_Size; i++) {
+            int pos = (index1 + i * index2) % Table_Size;
+            cout << "Probing i=" << i << ", pos=" << pos << "\n";
+
+            if (!used[pos]) {
+                cout << " => Inserted at position " << pos << "\n";
+                ids[pos] = playerID;
+                names[pos] = name;
+                used[pos] = true;
+                Print_Table();
+                return;
+            }
+
+            if (ids[pos] == playerID) {
+                cout << " => Updated existing key at " << pos << "\n";
+                names[pos] = name;
+                Print_Table();
+                return;
+            }
+        }
+
+        cout << "Hash Table Full.\n";
     }
 
     string search(int playerID) override {
-        // TODO: Implement double hashing search
-        // Return "" if player not found
+        int index1 = hash1(playerID);
+        int index2 = hash2(playerID);
+
+        cout << "\n=== SEARCH(" << playerID << ") ===\n";
+        cout << "hash1 = " << index1 << ", hash2 = " << index2 << "\n";
+
+        for (int i = 0; i < Table_Size; i++) {
+            int pos = (index1 + i * index2) % Table_Size;
+            cout << "Probing i=" << i << ", pos=" << pos << "\n";
+
+            if (!used[pos]) {
+                // Empty slot => stop searching
+                cout << " => Empty slot, NOT FOUND.\n";
+                return "";
+            }
+
+            if (ids[pos] == playerID) {
+                cout << " => FOUND at position " << pos << "\n";
+                return names[pos];
+            }
+        }
+
+        cout << " -> NOT FOUND after full table scan\n";
         return "";
     }
 };
@@ -175,4 +297,50 @@ extern "C" {
     AuctionTree* createAuctionTree() { 
         return new ConcreteAuctionTree(); 
     }
+}
+// How to Use Player LookUp
+int main() {
+    ConcretePlayerTable table;
+
+    int choice;
+    while (true) {
+        cout << "\n===========================\n";
+        cout << "     PLAYER TABLE MENU\n";
+        cout << "===========================\n";
+        cout << "1. Add Player\n";
+        cout << "2. Search Player\n";
+        cout << "3. Exit\n";
+        cout << "Enter choice: ";
+        cin >> choice;
+
+        if (choice == 1) {
+            int id;
+            string name;
+            cout << "Enter Player ID: ";
+            cin >> id;
+            cout << "Enter Player Name: ";
+            cin >> name;
+
+            table.insert(id, name);
+        } else if (choice == 2) {
+            int id;
+            cout << "Enter Player ID to search: ";
+            cin >> id;
+
+            string result = table.search(id);
+
+            if (result.empty())
+                cout << "Player not found.\n";
+            else
+                cout << "Found Player: " << result << "\n";
+        }
+        else if (choice == 3) {
+            cout << "Exiting...\n";
+            break;
+        }
+        else {
+            cout << "Invalid option, try again.\n";
+        }
+    }
+    return 0;
 }
