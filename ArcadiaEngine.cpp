@@ -308,26 +308,162 @@ long long InventorySystem::countStringPossibilities(string s) {
 // =========================================================
 
 bool WorldNavigator::pathExists(int n, vector<vector<int>>& edges, int source, int dest) {
-    // TODO: Implement path existence check using BFS or DFS
-    // edges are bidirectional
+
+    if (source == dest) {
+        return true;
+    }
+
+    //Build the Graph (Adjacency List)
+    vector<vector<int>> adj(n);
+    
+    for (const auto& edge : edges) {
+        int u = edge[0];
+        int v = edge[1];
+        
+        adj[u].push_back(v);
+        adj[v].push_back(u);
+    }
+
+    //BFS initialization
+    queue<int> q;
+    vector<bool> visited(n, false); 
+    
+    q.push(source);
+    visited[source] = true;
+
+    //BFS traversal
+    while (!q.empty()) {
+        int current = q.front();
+        q.pop();
+
+        if (current == dest) {
+            return true;
+        }
+
+        for (int neighbor : adj[current]) {
+            if (!visited[neighbor]) {
+                visited[neighbor] = true;
+                q.push(neighbor);
+            }
+        }
+    }
+
     return false;
 }
 
 long long WorldNavigator::minBribeCost(int n, int m, long long goldRate, long long silverRate,
                                        vector<vector<int>>& roadData) {
-    // TODO: Implement Minimum Spanning Tree (Kruskal's or Prim's)
-    // roadData[i] = {u, v, goldCost, silverCost}
-    // Total cost = goldCost * goldRate + silverCost * silverRate
-    // Return -1 if graph cannot be fully connected
+   
+    if (n == 1) return 0;
+    if (m < n - 1) return -1;
+
+    //struct to store edge info and the final cost
+    struct Edge {
+        int u, v;
+        long long cost;
+        
+        bool operator<(const Edge& other) const {
+            return cost < other.cost;
+        }
+    };
+
+    vector<Edge> allEdges;
+    
+    // Calculate the cost for each road 
+    for (const auto& road : roadData) {
+        long long totalWeight = (road[2] * goldRate) + (road[3] * silverRate);
+        allEdges.push_back({road[0], road[1], totalWeight});
+    }
+
+    sort(allEdges.begin(), allEdges.end());
+
+    // Use Kruskal's algorithm with Union-Find to pick the best roads
+    vector<int> parent(n);
+    iota(parent.begin(), parent.end(), 0); 
+
+    // Find the root of a set (with path compression optimization)
+    auto findSet = [&](int i, auto&& findSetRef) -> int {
+        if (parent[i] == i) return i;
+        return parent[i] = findSetRef(parent[i], findSetRef);
+    };
+
+    long long minTotalCost = 0;
+    int edgesCount = 0;
+
+    for (const auto& edge : allEdges) {
+        int rootU = findSet(edge.u, findSet);
+        int rootV = findSet(edge.v, findSet);
+
+        // If u,v are in different sets, connect them
+        if (rootU != rootV) {
+            parent[rootU] = rootV;
+            minTotalCost += edge.cost;
+            edgesCount++;
+        }
+    }
+
+    // Check if successfully connected all the cities
+    if (edgesCount == n - 1) {
+        return minTotalCost;
+    } else {
+        return -1; 
+    }
     return -1;
 }
 
 string WorldNavigator::sumMinDistancesBinary(int n, vector<vector<int>>& roads) {
-    // TODO: Implement All-Pairs Shortest Path (Floyd-Warshall)
-    // Sum all shortest distances between unique pairs (i < j)
-    // Return the sum as a binary string
-    // Hint: Handle large numbers carefully
-    return "0";
+
+    const long long INF = 1e18; 
+    vector<vector<long long>> dist(n, vector<long long>(n, INF));
+
+    // Distance from a city to itself is always zero
+    for (int i = 0; i < n; i++) {
+        dist[i][i] = 0;
+    }
+
+    // Load the initial road weights into the matrix
+    for (const auto& road : roads) {
+        int u = road[0];
+        int v = road[1];
+        int weight = road[2];
+
+        dist[u][v] = min(dist[u][v], (long long)weight);
+    }
+
+    // Floyd-Warshall algorithm to find all-pairs shortest paths
+    // Check if going through city 'k' is shorter than the direct path
+    for (int k = 0; k < n; k++) {
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                if (dist[i][k] != INF && dist[k][j] != INF) {
+                    dist[i][j] = min(dist[i][j], dist[i][k] + dist[k][j]);
+                }
+            }
+        }
+    }
+
+    // Sum up the shortest distances for every unique pair of cities
+    long long totalSum = 0;
+    for (int i = 0; i < n; i++) {
+        for (int j = i + 1; j < n; j++) {
+            if (dist[i][j] != INF) {
+                totalSum += dist[i][j];
+            }
+        }
+    }
+
+    if (totalSum == 0) return "0";
+
+    // Convert the total sum to a binary string manually
+    string binary = "";
+    while (totalSum > 0) {
+        binary += (totalSum % 2 == 0 ? "0" : "1");
+        totalSum /= 2;
+    }
+
+    reverse(binary.begin(), binary.end());
+    
+    return binary;
 }
 
 // =========================================================
