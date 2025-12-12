@@ -49,8 +49,8 @@
 	"kind" : "codemodel",
 	"paths" : 
 	{
-		"build" : "D:/3rd_year/Algo_Assign2/A2-Algorithms/cmake-build-debug",
-		"source" : "D:/3rd_year/Algo_Assign2/A2-Algorithms"
+		"build" : "D:/Assignments/A2-Algorithms/cmake-build-debug",
+		"source" : "D:/Assignments/A2-Algorithms"
 	},
 	"version" : 
 	{

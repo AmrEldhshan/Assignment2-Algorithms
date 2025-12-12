@@ -8,8 +8,8 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
-  "D:/3rd_year/Algo_Assign2/A2-Algorithms/ArcadiaEngine.cpp" "CMakeFiles/A2_Algorithms.dir/ArcadiaEngine.cpp.obj" "gcc" "CMakeFiles/A2_Algorithms.dir/ArcadiaEngine.cpp.obj.d"
-  "D:/3rd_year/Algo_Assign2/A2-Algorithms/main.cpp" "CMakeFiles/A2_Algorithms.dir/main.cpp.obj" "gcc" "CMakeFiles/A2_Algorithms.dir/main.cpp.obj.d"
+  "D:/Assignments/A2-Algorithms/ArcadiaEngine.cpp" "CMakeFiles/A2_Algorithms.dir/ArcadiaEngine.cpp.obj" "gcc" "CMakeFiles/A2_Algorithms.dir/ArcadiaEngine.cpp.obj.d"
+  "D:/Assignments/A2-Algorithms/main.cpp" "CMakeFiles/A2_Algorithms.dir/main.cpp.obj" "gcc" "CMakeFiles/A2_Algorithms.dir/main.cpp.obj.d"
   )
 
 # Targets to which this target links which contain Fortran sources.

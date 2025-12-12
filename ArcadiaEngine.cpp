@@ -221,25 +221,86 @@ public:
 // =========================================================
 
 int InventorySystem::optimizeLootSplit(int n, vector<int>& coins) {
-    // TODO: Implement partition problem using DP
-    // Goal: Minimize |sum(subset1) - sum(subset2)|
-    // Hint: Use subset sum DP to find closest sum to total/2
-    return 0;
+    int total = 0;
+    for (int i = 0; i < n; i++) {
+        total += coins[i];
+    }
+
+    int target = total / 2;
+
+    // dp[j] = true if sum j is achievable
+    vector<bool> dp(target + 1, false);
+    dp[0] = true;
+
+    for (int i = 0; i < n; i++) {
+        // Traverse from right to left to avoid using same coin twice
+        for (int j = target; j >= coins[i]; j--) {
+            if (dp[j - coins[i]]) {
+                dp[j] = true;
+            }
+        }
+    }
+
+    // Find the largest achievable sum <= target
+    int closest = 0;
+    for (int j = target; j >= 0; j--) {
+        if (dp[j]) {
+            closest = j;
+            break;
+        }
+    }
+
+    // Minimum difference = total - 2 * closest
+    return total - 2 * closest;
 }
 
 int InventorySystem::maximizeCarryValue(int capacity, vector<pair<int, int>>& items) {
-    // TODO: Implement 0/1 Knapsack using DP
-    // items = {weight, value} pairs
-    // Return maximum value achievable within capacity
-    return 0;
+    const int n = items.size();
+
+    // dp[w] = maximum value achievable with capacity w
+    vector<int> dp(capacity + 1, 0);
+
+    for (int i = 0; i < n; i++) {
+        int weight = items[i].first;
+        int value = items[i].second;
+
+        // Traverse from right to left for 0/1 knapsack
+        for (int w = capacity; w >= weight; w--) {
+            if (dp[w - weight] + value > dp[w]) {
+                dp[w] = dp[w - weight] + value;
+            }
+        }
+    }
+
+    return dp[capacity];
 }
 
 long long InventorySystem::countStringPossibilities(string s) {
-    // TODO: Implement string decoding DP
-    // Rules: "uu" can be decoded as "w" or "uu"
-    //        "nn" can be decoded as "m" or "nn"
-    // Count total possible decodings
-    return 0;
+    const int n = s.size();
+
+    if (n == 0) return 1;
+
+    // dp[i] = number of ways to decode s[0..i-1]
+    vector<long long> dp(n + 1, 0);
+    dp[0] = 1;  // Empty string has 1 way
+    dp[1] = 1;  // Single character has 1 way
+
+    for (int i = 2; i <= n; i++) {
+        // Single character decoding - always possible
+        dp[i] = dp[i - 1];
+
+        // Check for "uu" or "nn" pattern at positions i-2 and i-1
+        char prev = s[i - 2];
+        char curr = s[i - 1];
+
+        if ((prev == 'u' && curr == 'u') || (prev == 'n' && curr == 'n')) {
+            // Can decode as single letter (w or m) OR as two letters (uu or nn)
+            // Adding dp[i-2] accounts for the "decode as single letter" option
+            dp[i] += dp[i - 2];
+        }
+    }
+
+    return dp[n];
 }
 
 // =========================================================
@@ -286,61 +347,61 @@ int ServerKernel::minIntervals(vector<char>& tasks, int n) {
 // =========================================================
 
 extern "C" {
-    PlayerTable* createPlayerTable() { 
-        return new ConcretePlayerTable(); 
+    PlayerTable* createPlayerTable() {
+        return new ConcretePlayerTable();
     }
 
-    Leaderboard* createLeaderboard() { 
-        return new ConcreteLeaderboard(); 
+    Leaderboard* createLeaderboard() {
+        return new ConcreteLeaderboard();
     }
 
-    AuctionTree* createAuctionTree() { 
-        return new ConcreteAuctionTree(); 
+    AuctionTree* createAuctionTree() {
+        return new ConcreteAuctionTree();
     }
 }
 // How to Use Player LookUp
-int main() {
-    ConcretePlayerTable table;
-
-    int choice;
-    while (true) {
-        cout << "\n===========================\n";
-        cout << "     PLAYER TABLE MENU\n";
-        cout << "===========================\n";
-        cout << "1. Add Player\n";
-        cout << "2. Search Player\n";
-        cout << "3. Exit\n";
-        cout << "Enter choice: ";
-        cin >> choice;
-
-        if (choice == 1) {
-            int id;
-            string name;
-            cout << "Enter Player ID: ";
-            cin >> id;
-            cout << "Enter Player Name: ";
-            cin >> name;
-
-            table.insert(id, name);
-        } else if (choice == 2) {
-            int id;
-            cout << "Enter Player ID to search: ";
-            cin >> id;
-
-            string result = table.search(id);
-
-            if (result.empty())
-                cout << "Player not found.\n";
-            else
-                cout << "Found Player: " << result << "\n";
-        }
-        else if (choice == 3) {
-            cout << "Exiting...\n";
-            break;
-        }
-        else {
-            cout << "Invalid option, try again.\n";
-        }
-    }
-    return 0;
-}
+// int main() {
+//     ConcretePlayerTable table;
+//
+//     int choice;
+//     while (true) {
+//         cout << "\n===========================\n";
+//         cout << "     PLAYER TABLE MENU\n";
+//         cout << "===========================\n";
+//         cout << "1. Add Player\n";
+//         cout << "2. Search Player\n";
+//         cout << "3. Exit\n";
+//         cout << "Enter choice: ";
+//         cin >> choice;
+//
+//         if (choice == 1) {
+//             int id;
+//             string name;
+//             cout << "Enter Player ID: ";
+//             cin >> id;
+//             cout << "Enter Player Name: ";
+//             cin >> name;
+//
+//             table.insert(id, name);
+//         } else if (choice == 2) {
+//             int id;
+//             cout << "Enter Player ID to search: ";
+//             cin >> id;
+//
+//             string result = table.search(id);
+//
+//             if (result.empty())
+//                 cout << "Player not found.\n";
+//             else
+//                 cout << "Found Player: " << result << "\n";
+//         }
+//         else if (choice == 3) {
+//             cout << "Exiting...\n";
+//             break;
+//         }
+//         else {
+//             cout << "Invalid option, try again.\n";
+//         }
+//     }
+//     return 0;
+// }

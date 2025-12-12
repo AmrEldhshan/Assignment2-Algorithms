@@ -1,4 +1,4 @@
-set(CMAKE_RC_COMPILER "D:/Bandicam v7.1.2.2451 x64/clion/CLion 2024.2.1/bin/mingw/bin/windres.exe")
+set(CMAKE_RC_COMPILER "S:/JetBrains/CLion/bin/mingw/bin/windres.exe")
 set(CMAKE_RC_COMPILER_ARG1 "")
 set(CMAKE_RC_COMPILER_LOADED 1)
 set(CMAKE_RC_SOURCE_FILE_EXTENSIONS rc;RC)
