@@ -195,24 +195,253 @@ public:
 
 // --- 3. AuctionTree (Red-Black Tree) ---
 
+enum Color { red, black };
+
 class ConcreteAuctionTree : public AuctionTree {
 private:
-    // TODO: Define your Red-Black Tree node structure
-    // Hint: Each node needs: id, price, color, left, right, parent pointers
+    struct AuctionNode {
+        int itemID;
+        int price;
+        Color color;
+        AuctionNode* left;
+        AuctionNode* right;
+        AuctionNode* parent;
+
+        AuctionNode(int id = 0, int p = 0)
+            : itemID(id), price(p), color(black), left(nullptr), right(nullptr), parent(nullptr) {}
+    };
+
+    AuctionNode* root;
+    AuctionNode* nil; 
+
+    void leftRotate(AuctionNode* x) {
+        AuctionNode* y = x->right;
+        x->right = y->left;
+        if (y->left != nil) y->left->parent = x;
+        y->parent = x->parent;
+        if (x->parent == nil) root = y;
+        else if (x == x->parent->left) x->parent->left = y;
+        else x->parent->right = y;
+        y->left = x;
+        x->parent = y;
+    }
+
+    void rightRotate(AuctionNode* x) {
+        AuctionNode* y = x->left;
+        x->left = y->right;
+        if (y->right != nil) y->right->parent = x;
+        y->parent = x->parent;
+        if (x->parent == nil) root = y;
+        else if (x == x->parent->right) x->parent->right = y;
+        else x->parent->left = y;
+        y->right = x;
+        x->parent = y;
+    }
+
+    void insertFixup(AuctionNode* z) {
+        while (z->parent->color == red) {
+            if (z->parent == z->parent->parent->left) {
+                AuctionNode* y = z->parent->parent->right;
+                if (y->color == red) {
+                    z->parent->color = black;
+                    y->color = black;
+                    z->parent->parent->color = red;
+                    z = z->parent->parent;
+                } else {
+                    if (z == z->parent->right) {
+                        z = z->parent;
+                        leftRotate(z);
+                    }
+                    z->parent->color = black;
+                    z->parent->parent->color = red;
+                    rightRotate(z->parent->parent);
+                }
+            } else {
+                AuctionNode* y = z->parent->parent->left;
+                if (y->color == red) {
+                    z->parent->color = black;
+                    y->color = black;
+                    z->parent->parent->color = red;
+                    z = z->parent->parent;
+                } else {
+                    if (z == z->parent->left) {
+                        z = z->parent;
+                        rightRotate(z);
+                    }
+                    z->parent->color = black;
+                    z->parent->parent->color = red;
+                    leftRotate(z->parent->parent);
+                }
+            }
+            if (z == root) break;
+        }
+        root->color = black;
+    }
+
+    void transplant(AuctionNode* u, AuctionNode* v) {
+        if (u->parent == nil) root = v;
+        else if (u == u->parent->left) u->parent->left = v;
+        else u->parent->right = v;
+        v->parent = u->parent;
+    }
+
+    AuctionNode* treeMinimum(AuctionNode* x) {
+        while (x->left != nil) x = x->left;
+        return x;
+    }
+
+    void deleteFixup(AuctionNode* x) {
+        while (x != root && x->color == black) {
+            if (x == x->parent->left) {
+                AuctionNode* w = x->parent->right;
+                if (w->color == red) {
+                    w->color = black;
+                    x->parent->color = red;
+                    leftRotate(x->parent);
+                    w = x->parent->right;
+                }
+                if (w->left->color == black && w->right->color == black) {
+                    w->color = red;
+                    x = x->parent;
+                } else {
+                    if (w->right->color == black) {
+                        w->left->color = black;
+                        w->color = red;
+                        rightRotate(w);
+                        w = x->parent->right;
+                    }
+                    w->color = x->parent->color;
+                    x->parent->color = black;
+                    w->right->color = black;
+                    leftRotate(x->parent);
+                    x = root;
+                }
+            } else {
+                AuctionNode* w = x->parent->left;
+                if (w->color == red) {
+                    w->color = black;
+                    x->parent->color = red;
+                    rightRotate(x->parent);
+                    w = x->parent->left;
+                }
+                if (w->right->color == black && w->left->color == black) {
+                    w->color = red;
+                    x = x->parent;
+                } else {
+                    if (w->left->color == black) {
+                        w->right->color = black;
+                        w->color = red;
+                        leftRotate(w);
+                        w = x->parent->left;
+                    }
+                    w->color = x->parent->color;
+                    x->parent->color = black;
+                    w->left->color = black;
+                    rightRotate(x->parent);
+                    x = root;
+                }
+            }
+        }
+        x->color = black;
+    }
+
+    AuctionNode* searchNode(AuctionNode* node, int itemID) const {
+        while (node != nil && itemID != node->itemID) {
+            if (itemID < node->itemID) node = node->left;
+            else node = node->right;
+        }
+        return node;
+    }
+
+    void deleteSubtree(AuctionNode* node) {
+        if (node == nil) return;
+        deleteSubtree(node->left);
+        deleteSubtree(node->right);
+        delete node;
+    }
+    void inorderRec(AuctionNode* node) const {
+        if (node == nil) return;
+        inorderRec(node->left);
+        std::cout << "(" << node->itemID << ", price=" << node->price
+                  << ", color=" << (node->color == red ? "R" : "B") << ") ";
+        inorderRec(node->right);
+    }
 
 public:
     ConcreteAuctionTree() {
-        // TODO: Initialize your Red-Black Tree
+        nil = new AuctionNode();
+        nil->left = nil->right = nil->parent = nil;
+        nil->color = black;
+        root = nil;
+    }
+
+    ~ConcreteAuctionTree() override {
+        deleteSubtree(root);
+        delete nil;
     }
 
     void insertItem(int itemID, int price) override {
-        // TODO: Implement Red-Black Tree insertion
-        // Remember to maintain RB-Tree properties with rotations and recoloring
+        AuctionNode* z = new AuctionNode(itemID, price);
+        z->color = red;
+        z->left = z->right = z->parent = nil;
+
+        AuctionNode* y = nil;
+        AuctionNode* x = root;
+        while (x != nil) {
+            y = x;
+            if (z->itemID < x->itemID) x = x->left;
+            else x = x->right;
+        }
+        z->parent = y;
+        if (y == nil) root = z; 
+        else if (z->itemID < y->itemID) y->left = z;
+        else y->right = z;
+
+        insertFixup(z);
     }
 
     void deleteItem(int itemID) override {
-        // TODO: Implement Red-Black Tree deletion
-        // This is complex - handle all cases carefully
+        AuctionNode* z = searchNode(root, itemID);
+        if (z == nil) {
+            return;
+        }
+
+        AuctionNode* y = z;
+        Color yOriginalColor = y->color;
+        AuctionNode* x = nullptr;
+
+        if (z->left == nil) {
+            x = z->right;
+            transplant(z, z->right);
+        } else if (z->right == nil) {
+            x = z->left;
+            transplant(z, z->left);
+        } else {
+            y = treeMinimum(z->right);
+            yOriginalColor = y->color;
+            x = y->right;
+            if (y->parent == z) {
+                x->parent = y;
+            } else {
+                transplant(y, y->right);
+                y->right = z->right;
+                y->right->parent = y;
+            }
+            transplant(z, y);
+            y->left = z->left;
+            y->left->parent = y;
+            y->color = z->color;
+        }
+
+        delete z;
+
+        if (yOriginalColor == black) {
+            deleteFixup(x);
+        }
+    }
+
+    void inorderPrint() const {
+        inorderRec(root);
     }
 };
 
