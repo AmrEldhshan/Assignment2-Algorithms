@@ -171,8 +171,26 @@ public:
 class ConcreteLeaderboard : public Leaderboard {
 private:
     // TODO: Define your skip list node structure and necessary variables
-    // Hint: You'll need nodes with multiple forward pointers
+    // skip list node structure
+    struct SkipListNode {
+        int playerID;
+        int score;
+        SkipListNode** forward; // Dynamic array of forward pointers
+        int level;              // Current node level
 
+        // Olympian Performance: Allocate exactly needed pointers
+        SkipListNode(int id, int sc, int lvl)
+            : playerID(id), score(sc), level(lvl) {
+            forward = new SkipListNode*[lvl + 1];
+            for (int i = 0; i <= lvl; i++) {
+                forward[i] = nullptr;
+            }
+        }
+
+        ~SkipListNode() {
+            delete[] forward; // Manual memory management
+        }
+    };
 public:
     ConcreteLeaderboard() {
         // TODO: Initialize your skip list
@@ -375,7 +393,7 @@ public:
         root = nil;
     }
 
-    ~ConcreteAuctionTree() override {
+    ~ConcreteAuctionTree() {
         deleteSubtree(root);
         delete nil;
     }
