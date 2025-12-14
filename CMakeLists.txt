@@ -6,4 +6,5 @@ set(CMAKE_CXX_STANDARD 20)
 add_executable(A2_Algorithms main.cpp
                              ArcadiaEngine.h
                              ArcadiaEngine.cpp
+        " main_test_students.cpp"
 )

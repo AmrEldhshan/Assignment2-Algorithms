@@ -1,3 +1,3 @@
-S:\JetBrains\CLion\bin\cmake\win\x64\bin\cmake.exe -E rm -f CMakeFiles\A2_Algorithms.dir/objects.a
-S:\JetBrains\CLion\bin\mingw\bin\ar.exe qc CMakeFiles\A2_Algorithms.dir/objects.a @CMakeFiles\A2_Algorithms.dir\objects1.rsp
-S:\JetBrains\CLion\bin\mingw\bin\g++.exe -g -Wl,--whole-archive CMakeFiles\A2_Algorithms.dir/objects.a -Wl,--no-whole-archive -o A2_Algorithms.exe -Wl,--out-implib,libA2_Algorithms.dll.a -Wl,--major-image-version,0,--minor-image-version,0 @CMakeFiles\A2_Algorithms.dir\linkLibs.rsp
+"D:\Bandicam v7.1.2.2451 x64\clion\CLion 2024.2.1\bin\cmake\win\x64\bin\cmake.exe" -E rm -f CMakeFiles\A2_Algorithms.dir/objects.a
+"D:\Bandicam v7.1.2.2451 x64\clion\CLion 2024.2.1\bin\mingw\bin\ar.exe" qc CMakeFiles\A2_Algorithms.dir/objects.a @CMakeFiles\A2_Algorithms.dir\objects1.rsp
+"D:\Bandicam v7.1.2.2451 x64\clion\CLion 2024.2.1\bin\mingw\bin\g++.exe" -g -Wl,--whole-archive CMakeFiles\A2_Algorithms.dir/objects.a -Wl,--no-whole-archive -o A2_Algorithms.exe -Wl,--out-implib,libA2_Algorithms.dll.a -Wl,--major-image-version,0,--minor-image-version,0 @CMakeFiles\A2_Algorithms.dir\linkLibs.rsp

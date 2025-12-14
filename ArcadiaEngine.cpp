@@ -53,53 +53,6 @@ private:
         return step + 1;
     }
 
-    void Print_Table() const {
-        const int columns = 5;
-        const int rows = (Table_Size + columns - 1) / columns;
-        const int cell_size = 17;
-
-        string line_separator = "+";
-        for (int c = 0; c < columns; c++) {
-            line_separator += string(cell_size + 2, '-') + "+";
-        }
-        int total_width = line_separator.length();
-        string title = "Hash Table";
-        int padding_left = (total_width - 2 - title.length()) / 2;
-        int padding_right = total_width - 2 - title.length() - padding_left;
-
-        cout << "\n" << line_separator << "\n";
-        cout << "|" << string(padding_left, ' ') << title << string(padding_right, ' ') << "|\n";
-        cout << line_separator << "\n";
-
-        int index = 0;
-        for (int r = 0; r < rows; r++) {
-            cout << "|";
-            for (int c = 0; c < columns; c++) {
-                string content;
-
-                if (index < Table_Size) {
-                    if (used[index]) {
-                        content = names[index] + " (" + to_string(ids[index]) + ")";
-                    }
-                    else {
-                        content = "empty";
-                    }
-
-                    if (content.length() > cell_size) {
-                        content = content.substr(0, cell_size);
-                    }
-                }
-                else {
-                    content = "";
-                }
-
-                cout << " " << setw(cell_size) << left << content << " |";
-                index++;
-            }
-            cout << "\n" << line_separator << "\n";
-        }
-    }
-
 public:
     ConcretePlayerTable() {
         for (int i = 0; i < Table_Size; i++) {
@@ -123,19 +76,17 @@ public:
                 ids[pos] = playerID;
                 names[pos] = name;
                 used[pos] = true;
-                Print_Table();
+
                 return;
             }
 
             if (ids[pos] == playerID) {
                 cout << " => Updated existing key at " << pos << "\n";
                 names[pos] = name;
-                Print_Table();
                 return;
             }
         }
-
-        cout << "Hash Table Full.\n";
+        cout << "Table is Full" << endl;
     }
 
     string search(int playerID) override {
@@ -345,12 +296,14 @@ private:
         x->color = black;
     }
 
-    AuctionNode* searchNode(AuctionNode* node, int itemID) const {
-        while (node != nil && itemID != node->itemID) {
-            if (itemID < node->itemID) node = node->left;
-            else node = node->right;
-        }
-        return node;
+    AuctionNode* searchByID(AuctionNode* node, int itemID) const {
+        if (node == nil) return nil;
+        if (node->itemID == itemID) return node;
+
+        AuctionNode* leftResult = searchByID(node->left, itemID);
+        if (leftResult != nil) return leftResult;
+
+        return searchByID(node->right, itemID);
     }
 
     void deleteSubtree(AuctionNode* node) {
@@ -375,7 +328,7 @@ public:
         root = nil;
     }
 
-    ~ConcreteAuctionTree() override {
+    ~ConcreteAuctionTree() {
         deleteSubtree(root);
         delete nil;
     }
@@ -389,19 +342,21 @@ public:
         AuctionNode* x = root;
         while (x != nil) {
             y = x;
-            if (z->itemID < x->itemID) x = x->left;
-            else x = x->right;
+            if (z->price < x->price || (z->price == x->price && z->itemID < x->itemID))
+                x = x->left;
+            else
+                x = x->right;
         }
         z->parent = y;
         if (y == nil) root = z; 
-        else if (z->itemID < y->itemID) y->left = z;
+        else if (z->price < y->price || (z->price == y->price && z->itemID < y->itemID)) y->left = z;
         else y->right = z;
 
         insertFixup(z);
     }
 
     void deleteItem(int itemID) override {
-        AuctionNode* z = searchNode(root, itemID);
+        AuctionNode* z = searchByID(root, itemID);
         if (z == nil) {
             return;
         }
@@ -456,12 +411,16 @@ int InventorySystem::optimizeLootSplit(int n, vector<int>& coins) {
     }
 
     int target = total / 2;
+    
+    // Safety check: Prevent excessive memory usage (e.g. limit to ~200MB state)
+    if (target > 200000000) return 0;
 
     // dp[j] = true if sum j is achievable
     vector<bool> dp(target + 1, false);
     dp[0] = true;
-
+    
     for (int i = 0; i < n; i++) {
+        if (coins[i] < 0) continue; // Ignore negative coins just in case
         // Traverse from right to left to avoid using same coin twice
         for (int j = target; j >= coins[i]; j--) {
             if (dp[j - coins[i]]) {
@@ -485,6 +444,9 @@ int InventorySystem::optimizeLootSplit(int n, vector<int>& coins) {
 
 int InventorySystem::maximizeCarryValue(int capacity, vector<pair<int, int>>& items) {
     const int n = items.size();
+    
+    // Safety check for negative/massive capacity
+    if (capacity < 0 || capacity > 100000000) return 0;
 
     // dp[w] = maximum value achievable with capacity w
     vector<int> dp(capacity + 1, 0);
@@ -505,27 +467,26 @@ int InventorySystem::maximizeCarryValue(int capacity, vector<pair<int, int>>& it
 }
 
 long long InventorySystem::countStringPossibilities(string s) {
-    const int n = s.size();
-
+    int n = s.size();
     if (n == 0) return 1;
 
-    // dp[i] = number of ways to decode s[0..i-1]
     vector<long long> dp(n + 1, 0);
-    dp[0] = 1;  // Empty string has 1 way
-    dp[1] = 1;  // Single character has 1 way
+    dp[0] = 1;
 
-    for (int i = 2; i <= n; i++) {
-        // Single character decoding - always possible
-        dp[i] = dp[i - 1];
+    for (int i = 1; i <= n; i++) {
 
-        // Check for "uu" or "nn" pattern at positions i-2 and i-1
-        char prev = s[i - 2];
-        char curr = s[i - 1];
+        // Single character decode (u or n)
+        if (s[i - 1] == 'u' || s[i - 1] == 'n') {
+            dp[i] += dp[i - 1];
+        }
 
-        if ((prev == 'u' && curr == 'u') || (prev == 'n' && curr == 'n')) {
-            // Can decode as single letter (w or m) OR as two letters (uu or nn)
-            // Adding dp[i-2] accounts for the "decode as single letter" option
-            dp[i] += dp[i - 2];
+        // Two-character merge (uu -> w, nn -> m)
+        if (i >= 2) {
+            char a = s[i - 2];
+            char b = s[i - 1];
+            if ((a == 'u' && b == 'u') || (a == 'n' && b == 'n')) {
+                dp[i] += dp[i - 2];
+            }
         }
     }
 
@@ -542,12 +503,18 @@ bool WorldNavigator::pathExists(int n, vector<vector<int>>& edges, int source, i
         return true;
     }
 
+    // Safety check: Bound validation
+    if (source < 0 || source >= n || dest < 0 || dest >= n) return false;
+
     //Build the Graph (Adjacency List)
     vector<vector<int>> adj(n);
     
     for (const auto& edge : edges) {
         int u = edge[0];
         int v = edge[1];
+        
+        // Skip invalid edges
+        if (u < 0 || u >= n || v < 0 || v >= n) continue;
         
         adj[u].push_back(v);
         adj[v].push_back(u);
@@ -600,8 +567,13 @@ long long WorldNavigator::minBribeCost(int n, int m, long long goldRate, long lo
     
     // Calculate the cost for each road 
     for (const auto& road : roadData) {
+        int u = road[0];
+        int v = road[1];
+        // Validate edge bounds
+        if (u < 0 || u >= n || v < 0 || v >= n) continue;
+
         long long totalWeight = (road[2] * goldRate) + (road[3] * silverRate);
-        allEdges.push_back({road[0], road[1], totalWeight});
+        allEdges.push_back({u, v, totalWeight});
     }
 
     sort(allEdges.begin(), allEdges.end());
@@ -724,49 +696,3 @@ extern "C" {
         return new ConcreteAuctionTree();
     }
 }
-// How to Use Player LookUp
-// int main() {
-//     ConcretePlayerTable table;
-//
-//     int choice;
-//     while (true) {
-//         cout << "\n===========================\n";
-//         cout << "     PLAYER TABLE MENU\n";
-//         cout << "===========================\n";
-//         cout << "1. Add Player\n";
-//         cout << "2. Search Player\n";
-//         cout << "3. Exit\n";
-//         cout << "Enter choice: ";
-//         cin >> choice;
-//
-//         if (choice == 1) {
-//             int id;
-//             string name;
-//             cout << "Enter Player ID: ";
-//             cin >> id;
-//             cout << "Enter Player Name: ";
-//             cin >> name;
-//
-//             table.insert(id, name);
-//         } else if (choice == 2) {
-//             int id;
-//             cout << "Enter Player ID to search: ";
-//             cin >> id;
-//
-//             string result = table.search(id);
-//
-//             if (result.empty())
-//                 cout << "Player not found.\n";
-//             else
-//                 cout << "Found Player: " << result << "\n";
-//         }
-//         else if (choice == 3) {
-//             cout << "Exiting...\n";
-//             break;
-//         }
-//         else {
-//             cout << "Invalid option, try again.\n";
-//         }
-//     }
-//     return 0;
-// }

@@ -1,4 +1,4 @@
-set(CMAKE_C_COMPILER "S:/JetBrains/CLion/bin/mingw/bin/gcc.exe")
+set(CMAKE_C_COMPILER "D:/Bandicam v7.1.2.2451 x64/clion/CLion 2024.2.1/bin/mingw/bin/gcc.exe")
 set(CMAKE_C_COMPILER_ARG1 "")
 set(CMAKE_C_COMPILER_ID "GNU")
 set(CMAKE_C_COMPILER_VERSION "13.1.0")
@@ -22,14 +22,14 @@ set(CMAKE_C_SIMULATE_VERSION "")
 
 
 
-set(CMAKE_AR "S:/JetBrains/CLion/bin/mingw/bin/ar.exe")
-set(CMAKE_C_COMPILER_AR "S:/JetBrains/CLion/bin/mingw/bin/gcc-ar.exe")
-set(CMAKE_RANLIB "S:/JetBrains/CLion/bin/mingw/bin/ranlib.exe")
-set(CMAKE_C_COMPILER_RANLIB "S:/JetBrains/CLion/bin/mingw/bin/gcc-ranlib.exe")
-set(CMAKE_LINKER "S:/JetBrains/CLion/bin/mingw/bin/ld.exe")
+set(CMAKE_AR "D:/Bandicam v7.1.2.2451 x64/clion/CLion 2024.2.1/bin/mingw/bin/ar.exe")
+set(CMAKE_C_COMPILER_AR "D:/Bandicam v7.1.2.2451 x64/clion/CLion 2024.2.1/bin/mingw/bin/gcc-ar.exe")
+set(CMAKE_RANLIB "D:/Bandicam v7.1.2.2451 x64/clion/CLion 2024.2.1/bin/mingw/bin/ranlib.exe")
+set(CMAKE_C_COMPILER_RANLIB "D:/Bandicam v7.1.2.2451 x64/clion/CLion 2024.2.1/bin/mingw/bin/gcc-ranlib.exe")
+set(CMAKE_LINKER "D:/Bandicam v7.1.2.2451 x64/clion/CLion 2024.2.1/bin/mingw/bin/ld.exe")
 set(CMAKE_LINKER_LINK "")
 set(CMAKE_LINKER_LLD "")
-set(CMAKE_C_COMPILER_LINKER "S:/JetBrains/CLion/bin/mingw/bin/ld.exe")
+set(CMAKE_C_COMPILER_LINKER "D:/Bandicam v7.1.2.2451 x64/clion/CLion 2024.2.1/bin/mingw/bin/ld.exe")
 set(CMAKE_C_COMPILER_LINKER_ID "GNU")
 set(CMAKE_C_COMPILER_LINKER_VERSION 2.40)
 set(CMAKE_C_COMPILER_LINKER_FRONTEND_VARIANT GNU)
@@ -46,7 +46,7 @@ set(CMAKE_C_COMPILER_ID_RUN 1)
 set(CMAKE_C_SOURCE_FILE_EXTENSIONS c;m)
 set(CMAKE_C_IGNORE_EXTENSIONS h;H;o;O;obj;OBJ;def;DEF;rc;RC)
 set(CMAKE_C_LINKER_PREFERENCE 10)
-set(CMAKE_C_LINKER_DEPFILE_SUPPORTED )
+set(CMAKE_C_LINKER_DEPFILE_SUPPORTED FALSE)
 
 # Save compiler ABI information.
 set(CMAKE_C_SIZEOF_DATA_PTR "8")
@@ -75,7 +75,7 @@ endif()
 
 
 
-set(CMAKE_C_IMPLICIT_INCLUDE_DIRECTORIES "S:/JetBrains/CLion/bin/mingw/lib/gcc/x86_64-w64-mingw32/13.1.0/include;S:/JetBrains/CLion/bin/mingw/include;S:/JetBrains/CLion/bin/mingw/lib/gcc/x86_64-w64-mingw32/13.1.0/include-fixed;S:/JetBrains/CLion/bin/mingw/x86_64-w64-mingw32/include")
-set(CMAKE_C_IMPLICIT_LINK_LIBRARIES "mingw32;gcc;moldname;mingwex;kernel32;pthread;advapi32;shell32;user32;kernel32;iconv;mingw32;gcc;moldname;mingwex;kernel32")
-set(CMAKE_C_IMPLICIT_LINK_DIRECTORIES "S:/JetBrains/CLion/bin/mingw/lib/gcc/x86_64-w64-mingw32/13.1.0;S:/JetBrains/CLion/bin/mingw/lib/gcc;S:/JetBrains/CLion/bin/mingw/x86_64-w64-mingw32/lib;S:/JetBrains/CLion/bin/mingw/lib")
+set(CMAKE_C_IMPLICIT_INCLUDE_DIRECTORIES "D:/Bandicam v7.1.2.2451 x64/clion/CLion 2024.2.1/bin/mingw/lib/gcc/x86_64-w64-mingw32/13.1.0/include;D:/Bandicam v7.1.2.2451 x64/clion/CLion 2024.2.1/bin/mingw/include;D:/Bandicam v7.1.2.2451 x64/clion/CLion 2024.2.1/bin/mingw/lib/gcc/x86_64-w64-mingw32/13.1.0/include-fixed;D:/Bandicam v7.1.2.2451 x64/clion/CLion 2024.2.1/bin/mingw/x86_64-w64-mingw32/include")
+set(CMAKE_C_IMPLICIT_LINK_LIBRARIES "")
+set(CMAKE_C_IMPLICIT_LINK_DIRECTORIES "")
 set(CMAKE_C_IMPLICIT_LINK_FRAMEWORK_DIRECTORIES "")
