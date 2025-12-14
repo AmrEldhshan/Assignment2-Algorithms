@@ -150,14 +150,14 @@ void test_PartC_Navigator() {
     }());
 }
 
-// void test_PartD_Kernel() {
-//     cout << "\n--- Part D: Server Kernel (Original Happy Path) ---" << endl;
-//
-//     runner.runTest("Original: Scheduler {A,A,B} n=2 -> 4", [&]() {
-//         vector<char> t = {'A', 'A', 'B'};
-//         return ServerKernel::minIntervals(t, 2) == 4;
-//     }());
-// }
+void test_PartD_Kernel() {
+    cout << "\n--- Part D: Server Kernel (Original Happy Path) ---" << endl;
+
+    runner.runTest("Original: Scheduler {A,A,B} n=2 -> 4", [&]() {
+        vector<char> t = {'A', 'A', 'B'};
+        return ServerKernel::minIntervals(t, 2) == 4;
+    }());
+}
 
 // ==========================================
 // NEW RIGOROUS TEST SUITE (60 TESTS)
@@ -233,6 +233,14 @@ void test_PartA_PlayerTable_Extreme() {
         for(int i=300; i<310; ++i) table->insert(i, to_string(i));
         for(int i=300; i<310; ++i) if(table->search(i) != to_string(i)) ok = false;
         return ok;
+    }());
+
+    // 11. INT_MIN Hash Check (More Extreme)
+    runner.runTest("A1-11. Hash INT_MIN", [&]() {
+        // abs(INT_MIN) is undefined or negative on 2's complement.
+        // Hashing logic often bugs out here.
+        table->insert(INT_MIN, "Bot");
+        return table->search(INT_MIN) == "Bot";
     }());
 
     delete table;
@@ -423,6 +431,19 @@ void test_PartA_AuctionTree_Extreme() {
         return true;
     }());
 
+    // 13. Recursion Depth / Balance Check (More Extreme)
+    runner.runTest("A3-13. Sorted Insert (10k items)", [&]() {
+        // Inserting 10k sorted items.
+        // If RBT is correct -> Depth ~log(10k) ~14. Fast.
+        // If BST is degenerate -> Depth 10k. Recursive functions might stack overflow.
+        for(int i=0; i<10000; ++i) {
+            tree->insertItem(i, i); 
+        }
+        // Deleting from the middle to force rebalancing check
+        tree->deleteItem(5000);
+        return true; 
+    }());
+
     delete tree;
 }
 
@@ -541,11 +562,19 @@ void test_PartC_Extreme() {
     runner.runTest("C-9. BinarySum Large", [&]() {
         vector<vector<int>> r={{0,1,15}}; return WorldNavigator::sumMinDistancesBinary(2,r) == "1111";
     }());
-    // 12. Large Coin Vector
-    runner.runTest("B-12. LootSplit Large Vec", [&]() {
-        // 50 items of value 1. Sum=50. Target=25. Achievable? Yes. Diff=0.
-        vector<int> c(50, 1);
-        return InventorySystem::optimizeLootSplit(50, c) == 0;
+    // 14. Massive MST (Complete Graph N=100)
+    runner.runTest("C-14. Massive MST (Complete Graph N=100)", [&]() {
+        // N=100 -> Edges = 4950. 
+        int N = 100;
+        vector<vector<int>> r;
+        for(int i=0; i<N; ++i) {
+            for(int j=i+1; j<N; ++j) {
+                r.push_back({i, j, 1, 1});
+            }
+        }
+        // MST cost should be N-1 edges of weight (1*1 + 1*1) = 2.
+        // Total cost = 99 * 2 = 198.
+        return WorldNavigator::minBribeCost(N, 10000, 1, 1, r) == 198;
     }());
 
     // --- DESTRUCTIVE TESTS (Likely to Fail / Crash Current Impl) ---
@@ -575,45 +604,45 @@ void test_PartC_Extreme() {
 }
 
 // --- Part D: Scheduler (10 Tests) ---
-// void test_PartD_Extreme() {
-//     cout << "\n--- Part D: Scheduler Extreme (10 Tests) ---" << endl;
-//
-//     runner.runTest("D-1. Empty", [&]() {
-//         vector<char> t; return ServerKernel::minIntervals(t, 2) == 0;
-//     }());
-//     runner.runTest("D-2. Single", [&]() {
-//         vector<char> t={'A'}; return ServerKernel::minIntervals(t, 5) == 1;
-//     }());
-//     runner.runTest("D-3. All Same", [&]() {
-//         vector<char> t={'A','A','A'}; return ServerKernel::minIntervals(t, 2) == 7;
-//     }()); // A _ _ A _ _ A = 1+2+1+2+1 = 7? Wait. A(0), A(3), A(6). intervals: 0,1,2,3,4,5,6 => 7 slots. Yes.
-//     runner.runTest("D-4. n=0", [&]() {
-//         vector<char> t={'A','A'}; return ServerKernel::minIntervals(t, 0) == 2;
-//     }());
-//     runner.runTest("D-5. Distinct", [&]() {
-//         vector<char> t={'A','B','C'}; return ServerKernel::minIntervals(t, 10) == 3;
-//     }());
-//     runner.runTest("D-6. Mixed", [&]() {
-//         vector<char> t={'A','A','B'}; // A B _ A
-//         return ServerKernel::minIntervals(t, 2) == 4;
-//     }());
-//     runner.runTest("D-7. Order Indep", [&]() {
-//         vector<char> t={'B','A','A'};
-//         return ServerKernel::minIntervals(t, 2) == 4;
-//     }());
-//     runner.runTest("D-8. Large n", [&]() {
-//         vector<char> t={'A','A'}; // A _ _ _ A (n=3) -> 1+3+1 = 5
-//         return ServerKernel::minIntervals(t, 3) == 5;
-//     }());
-//     runner.runTest("D-9. Pair", [&]() {
-//         vector<char> t={'A','A','B','B'}; // n=2. A B _ A B -> 5
-//         return ServerKernel::minIntervals(t, 2) == 5;
-//     }());
-//     runner.runTest("D-10. Trio", [&]() {
-//         vector<char> t={'A','A','B','B','C','C'}; // n=1. A B C A B C -> 6
-//         return ServerKernel::minIntervals(t, 1) == 6;
-//     }());
-// }
+void test_PartD_Extreme() {
+    cout << "\n--- Part D: Scheduler Extreme (10 Tests) ---" << endl;
+
+    runner.runTest("D-1. Empty", [&]() {
+        vector<char> t; return ServerKernel::minIntervals(t, 2) == 0;
+    }());
+    runner.runTest("D-2. Single", [&]() {
+        vector<char> t={'A'}; return ServerKernel::minIntervals(t, 5) == 1;
+    }());
+    runner.runTest("D-3. All Same", [&]() {
+        vector<char> t={'A','A','A'}; return ServerKernel::minIntervals(t, 2) == 7;
+    }()); // A _ _ A _ _ A = 1+2+1+2+1 = 7? Wait. A(0), A(3), A(6). intervals: 0,1,2,3,4,5,6 => 7 slots. Yes.
+    runner.runTest("D-4. n=0", [&]() {
+        vector<char> t={'A','A'}; return ServerKernel::minIntervals(t, 0) == 2;
+    }());
+    runner.runTest("D-5. Distinct", [&]() {
+        vector<char> t={'A','B','C'}; return ServerKernel::minIntervals(t, 10) == 3;
+    }());
+    runner.runTest("D-6. Mixed", [&]() {
+        vector<char> t={'A','A','B'}; // A B _ A
+        return ServerKernel::minIntervals(t, 2) == 4;
+    }());
+    runner.runTest("D-7. Order Indep", [&]() {
+        vector<char> t={'B','A','A'};
+        return ServerKernel::minIntervals(t, 2) == 4;
+    }());
+    runner.runTest("D-8. Large n", [&]() {
+        vector<char> t={'A','A'}; // A _ _ _ A (n=3) -> 1+3+1 = 5
+        return ServerKernel::minIntervals(t, 3) == 5;
+    }());
+    runner.runTest("D-9. Pair", [&]() {
+        vector<char> t={'A','A','B','B'}; // n=2. A B _ A B -> 5
+        return ServerKernel::minIntervals(t, 2) == 5;
+    }());
+    runner.runTest("D-10. Trio", [&]() {
+        vector<char> t={'A','A','B','B','C','C'}; // n=1. A B C A B C -> 6
+        return ServerKernel::minIntervals(t, 1) == 6;
+    }());
+}
 
 int main() {
     cout << "==========================================" << endl;
@@ -624,7 +653,7 @@ int main() {
     test_PartA_DataStructures();
     test_PartB_Inventory();
     test_PartC_Navigator();
-    // test_PartD_Kernel();
+    test_PartD_Kernel();
 
     // 2. New Rigorous Tests
     test_PartA_PlayerTable_Extreme();
@@ -632,7 +661,7 @@ int main() {
     test_PartA_AuctionTree_Extreme();
     test_PartB_Extreme();
     test_PartC_Extreme();
-    // test_PartD_Extreme();
+    test_PartD_Extreme();
 
     runner.printSummary();
 
