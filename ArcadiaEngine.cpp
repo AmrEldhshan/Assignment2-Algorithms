@@ -702,7 +702,7 @@ string WorldNavigator::sumMinDistancesBinary(int n, vector<vector<int>>& roads) 
 
     if (totalSum == 0) return "0";
 
-    // Convert the total sum to a binary string manually
+    // Convert the total sum to a binary string 
     string binary = "";
     while (totalSum > 0) {
         binary += (totalSum % 2 == 0 ? "0" : "1");
@@ -719,11 +719,33 @@ string WorldNavigator::sumMinDistancesBinary(int n, vector<vector<int>>& roads) 
 // =========================================================
 
 int ServerKernel::minIntervals(vector<char>& tasks, int n) {
-    // TODO: Implement task scheduler with cooling time
-    // Same task must wait 'n' intervals before running again
-    // Return minimum total intervals needed (including idle time)
-    // Hint: Use greedy approach with frequency counting
-    return 0;
+
+    //Array to find the max frequncy 
+    int counts[26] = {0}; 
+    int maxFreq = 0;
+    
+    //Count frequencies
+    for (char task : tasks) {
+        int index = task - 'A'; 
+        counts[index]++;
+        
+        if (counts[index] > maxFreq) {
+            maxFreq = counts[index];
+        }
+    }
+
+    //If there many chars has the same MaxFreq
+    int countMaxFreq = 0;
+    for (int i = 0; i < 26; i++) {
+        if (counts[i] == maxFreq) {
+            countMaxFreq++;
+        }
+    }
+
+    //Calculate gaps
+    int minLen = (maxFreq - 1) * (n + 1) + countMaxFreq;
+
+    return max(minLen, (int)tasks.size());
 }
 
 // =========================================================
