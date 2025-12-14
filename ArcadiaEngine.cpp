@@ -157,7 +157,8 @@ private:
         int x = nodeCount;
         while ((x % 2) == 0 && lvl < maxLevel)
         {
-            lvl++; x /= 2;
+            lvl++;
+            x /= 2;
         }
         return lvl;
     }
